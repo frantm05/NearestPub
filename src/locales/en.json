@@ -1,0 +1,187 @@
+{
+  "common": {
+    "appName": "NearestPub",
+    "tagline": "Finds draught beer wherever you are",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "retry": "Try again",
+    "close": "Close",
+    "remove": "Remove",
+    "errorGeneric": "Something went wrong",
+    "priceCzk": "{{value}} CZK",
+    "walkMinutes": "{{count}} min walk",
+    "openSettings": "Open settings"
+  },
+  "tabs": {
+    "nearby": "Nearby",
+    "map": "Map",
+    "favorites": "Favorites",
+    "settings": "Settings"
+  },
+  "nearby": {
+    "title": "Beer on tap",
+    "subtitle_one": "{{count}} place pouring draught beer nearby",
+    "subtitle_other": "{{count}} places pouring draught beer nearby",
+    "searching": "Looking for draught beer…",
+    "locating": "Finding your location…",
+    "nearestBadge": "Nearest",
+    "emptyTitle": "No draught beer here",
+    "emptyBody": "We couldn't find a single place with beer on tap around you. Try again, or come back when you've wandered somewhere thirstier.",
+    "fallbackBanner": "Location unavailable — showing České Budějovice city centre.",
+    "deniedBanner": "Location permission denied. Allow it so we can find beer near you.",
+    "grantButton": "Allow location",
+    "liveLabel": "LIVE",
+    "beersOnTap_one": "{{count}} beer on tap",
+    "beersOnTap_other": "{{count}} beers on tap",
+    "fromPrice": "from {{price}}",
+    "open": "Open",
+    "closed": "Closed",
+    "opensAt": "Opens at {{time}}",
+    "closesAt": "Closes at {{time}}"
+  },
+  "venueType": {
+    "pub": "Pub",
+    "restaurant": "Restaurant",
+    "cafe": "Café",
+    "club": "Club",
+    "beerGarden": "Beer garden"
+  },
+  "features": {
+    "tankBeer": "Tank beer",
+    "garden": "Garden",
+    "food": "Kitchen",
+    "dogFriendly": "Dog friendly",
+    "liveMusic": "Live music",
+    "cardPayment": "Cards accepted"
+  },
+  "beerStyle": {
+    "paleLager": "pale lager",
+    "darkLager": "dark lager",
+    "amberLager": "amber lager",
+    "wheat": "wheat beer",
+    "ipa": "IPA",
+    "apa": "APA",
+    "stout": "stout",
+    "sour": "sour",
+    "unfiltered": "unfiltered lager"
+  },
+  "detail": {
+    "onTap": "On tap",
+    "addBeer": "Add beer",
+    "route": "Route",
+    "compass": "Compass",
+    "openInMaps": "Open in maps app",
+    "hours": "Opening hours",
+    "ratingCount_one": "{{count}} rating",
+    "ratingCount_other": "{{count}} ratings",
+    "verifyHint": "Do the prices match? Confirming helps everyone drink informed.",
+    "priceCorrect": "Correct",
+    "priceChanged": "Changed",
+    "verifiedAgo": "verified {{time}}",
+    "thanksVote": "Thanks! Price confirmed.",
+    "priceUpdated": "Price updated. Thanks for helping out!",
+    "beerAdded": "Beer added to the tap list.",
+    "beerRemoved": "Beer removed.",
+    "removeBeerTitle": "Remove {{beer}}?",
+    "removeBeerBody": "It will disappear from the tap list. If it's the last draught beer, the venue will be hidden entirely.",
+    "gone": "This place no longer pours draught beer.",
+    "offlineSnapshot": "Saved from an earlier visit. Price verification works only for places currently around you."
+  },
+  "priceEditor": {
+    "title": "New price",
+    "subtitle": "{{beer}} — {{venue}}",
+    "current": "Previous price: {{price}}",
+    "inputLabel": "Price per {{volume}}",
+    "saveCta": "Save price",
+    "validation": "Enter a price between {{min}} and {{max}} CZK."
+  },
+  "addBeer": {
+    "title": "Add a beer on tap",
+    "subtitle": "Pick the beer and set its price",
+    "priceLabel": "Price (CZK)",
+    "cta": "Put it on tap",
+    "empty": "Every beer from our catalog is already on tap here. Impressive."
+  },
+  "route": {
+    "title": "Route",
+    "walkSummary": "{{distance}} • {{minutes}} min walk",
+    "arrived": "You're here. Cheers! 🍻",
+    "recalculating": "Recalculating route…",
+    "openCompass": "Open compass",
+    "approximate": "approximate route"
+  },
+  "compass": {
+    "title": "Compass",
+    "pointing": "The arrow points straight to your beer",
+    "lowAccuracy": "Compass is imprecise. Wave your phone in a figure eight to calibrate.",
+    "unavailable": "This device reports no compass data. The arrow shows the target direction with the phone facing north.",
+    "away": "{{distance}} away",
+    "arrived": "You made it. Cheers! 🍻",
+    "cardinals": { "n": "N", "e": "E", "s": "S", "w": "W" }
+  },
+  "map": {
+    "title": "Beer map",
+    "recenter": "Back to my location",
+    "detail": "Detail",
+    "searchArea": "Search this area"
+  },
+  "filters": {
+    "title": "Filters",
+    "trigger": "Filters",
+    "priceSection": "Price per pint",
+    "priceAny": "Any",
+    "priceBudget": "Under 49 CZK",
+    "priceModerate": "50–69 CZK",
+    "pricePremium": "70+ CZK",
+    "brewerySection": "Brewery",
+    "styleSection": "Beer style",
+    "clear": "Clear filters",
+    "done": "Done",
+    "emptyTitle": "Nothing passed the filter",
+    "emptyBody": "No place around here matches your filters. Try loosening them a little."
+  },
+  "favorites": {
+    "title": "Favorites",
+    "subtitle_one": "{{count}} saved place",
+    "subtitle_other": "{{count}} saved places",
+    "emptyTitle": "No favorites yet",
+    "emptyBody": "Tap the heart on any pub and it will be waiting here, even when it's far away."
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "themeSystem": "System",
+    "themeModeSystem": "System",
+    "themeModeLight": "Light",
+    "themeModeDark": "Dark",
+    "themeCrispPilsner": "Crisp Pilsner",
+    "themeAmberLager": "Amber Lager",
+    "themeDarkStout": "Dark Stout",
+    "language": "Language",
+    "langSystem": "System",
+    "langCs": "Čeština",
+    "langEn": "English",
+    "dataSection": "Community data",
+    "resetEdits": "Reset community edits",
+    "resetEditsBody": "Removes your local price and tap-list edits and restores the original data.",
+    "resetConfirmTitle": "Reset edits?",
+    "resetDone": "Edits reset.",
+    "about": "About",
+    "aboutBody": "NearestPub finds the closest place pouring draught beer, walks you there by map or compass, and lets the community keep beer prices honest. All venue data in this build is a local simulation.",
+    "version": "Version {{version}}",
+    "madeWith": "Brewed with 🍺 in Czechia"
+  },
+  "toasts": {
+    "errorGeneric": "Couldn't save that. Please try again."
+  },
+  "time": {
+    "justNow": "moments ago",
+    "minutesAgo_one": "{{count}} minute ago",
+    "minutesAgo_other": "{{count}} minutes ago",
+    "hoursAgo_one": "{{count}} hour ago",
+    "hoursAgo_other": "{{count}} hours ago",
+    "daysAgo_one": "{{count}} day ago",
+    "daysAgo_other": "{{count}} days ago"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "NearestPub",
+    "slug": "nearestpub",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "platforms": ["ios", "android"],
+    "assetBundlePatterns": ["**/*"],
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#120C07"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nearestpub.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "NearestPub uses your location to find pubs with beer on tap near you and to guide you to them."
+      }
+    },
+    "android": {
+      "package": "com.nearestpub.app",
+      "edgeToEdgeEnabled": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#120C07"
+      },
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "NearestPub uses your location to find the nearest pub with beer on tap."
+        }
+      ]
+    ]
+  }
+}
