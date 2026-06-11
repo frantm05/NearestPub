@@ -91,7 +91,7 @@ function VenuePinMarker({ venue, tier, selected, label, onSelect }: VenuePinMark
         onSelect(venue.id);
       }}
     >
-      <VenueMarker label={label} selected={selected} tier={tier} />
+      <VenueMarker label={label} selected={selected} tier={tier} type={venue.type} />
     </Marker>
   );
 }

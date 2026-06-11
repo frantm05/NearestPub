@@ -1,78 +1,40 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { AppText } from './AppText';
 import { radius } from '../theme/palette';
 import { useAppTheme } from '../theme/ThemeProvider';
+import type { VenueType } from '../types/models';
 
 /**
  * Zoom-aware marker detail tiers, decided by the map screen:
- *  - 'full'    — beer-mug pill with the cheapest pint price (close zoom)
- *  - 'compact' — round beer-mug pin (district zoom)
+ *  - 'full'    — type-icon pill with the cheapest pint price (close zoom)
+ *  - 'compact' — round type-icon pin (district zoom)
  *  - 'dot'     — small amber dot (city overview)
  *
- * Built exclusively from fixed-size Views (no icon fonts, no border-triangle
- * hacks): markers render under `tracksViewChanges={false}`, which rasterizes
- * them once on mount — anything that loads asynchronously (like a glyph font)
- * can miss that snapshot and leave a broken artifact behind. Plain Views are
- * painted synchronously, so the pin always rasterizes whole.
+ * Icons are async font glyphs; the map screen holds tracksViewChanges=true
+ * via useRasterWarmup long enough for the glyph to load before the native
+ * snapshot freezes the marker.
  */
 export type MarkerTier = 'full' | 'compact' | 'dot';
+
+const TYPE_ICONS: Record<VenueType, keyof typeof Ionicons.glyphMap> = {
+  pub: 'beer',
+  restaurant: 'restaurant',
+  cafe: 'cafe',
+  club: 'musical-notes',
+  beerGarden: 'leaf',
+};
 
 interface VenueMarkerProps {
   label: string;
   selected: boolean;
   tier: MarkerTier;
+  type?: VenueType;
 }
 
 const OUTLINE_WIDTH = 2;
-
-/** A beer mug drawn from views: foam cap, straight-walled body, C-handle. */
-function MugGlyph({ size, color }: { size: number; color: string }) {
-  const bodyWidth = Math.round(size * 0.52);
-  const foamHeight = Math.max(2, Math.round(size * 0.2));
-  const bodyHeight = Math.round(size * 0.78) - foamHeight;
-  const handleSize = Math.round(size * 0.34);
-  const handleStroke = Math.max(1.5, Math.round(size * 0.11));
-
-  return (
-    <View style={[styles.glyphBox, { width: size, height: size }]}>
-      <View style={styles.glyphMug}>
-        <View
-          style={{
-            width: bodyWidth + 3,
-            height: foamHeight,
-            borderRadius: foamHeight / 2,
-            backgroundColor: color,
-          }}
-        />
-        <View
-          style={{
-            width: bodyWidth,
-            height: bodyHeight,
-            marginTop: 1,
-            borderBottomLeftRadius: 2,
-            borderBottomRightRadius: 2,
-            backgroundColor: color,
-          }}
-        />
-      </View>
-      <View
-        style={{
-          width: handleSize,
-          height: handleSize,
-          marginLeft: -1,
-          marginTop: foamHeight - 1, // hang the handle off the body, not the foam
-          borderWidth: handleStroke,
-          borderLeftWidth: 0,
-          borderColor: color,
-          borderTopRightRadius: handleSize,
-          borderBottomRightRadius: handleSize,
-        }}
-      />
-    </View>
-  );
-}
 
 /**
  * The pin's pointed tip: the lower half of an outlined, rotated square,
@@ -99,11 +61,12 @@ function PinTip({ width, fill, ring }: { width: number; fill: string; ring: stri
   );
 }
 
-export function VenueMarker({ label, selected, tier }: VenueMarkerProps) {
+export function VenueMarker({ label, selected, tier, type }: VenueMarkerProps) {
   const { theme } = useAppTheme();
   const fill = selected ? theme.colors.accentStrong : theme.colors.accent;
   const ring = theme.colors.surface;
   const ink = theme.colors.onAccent;
+  const iconName = type ? TYPE_ICONS[type] : 'beer';
 
   if (tier === 'dot') {
     const size = selected ? 18 : 13;
@@ -124,6 +87,7 @@ export function VenueMarker({ label, selected, tier }: VenueMarkerProps) {
 
   if (tier === 'compact') {
     const head = selected ? 40 : 32;
+    const iconSize = Math.round(head * 0.46);
     return (
       <View collapsable={false} style={styles.pin}>
         <View
@@ -135,20 +99,25 @@ export function VenueMarker({ label, selected, tier }: VenueMarkerProps) {
               borderRadius: head / 2,
               backgroundColor: fill,
               borderColor: ring,
+              // Android borderRadius doesn't clip children — without this the
+              // glyph can bleed past the circle and render as a D-shape.
+              overflow: 'hidden',
             },
           ]}
         >
-          <MugGlyph size={Math.round(head * 0.58)} color={ink} />
+          <Ionicons name={iconName} size={iconSize} color={ink} />
         </View>
         <PinTip width={selected ? 17 : 13} fill={fill} ring={ring} />
       </View>
     );
   }
 
+  // tier === 'full'
+  const iconSize = selected ? 16 : 14;
   return (
     <View collapsable={false} style={styles.pin}>
       <View style={[styles.pricePill, { backgroundColor: fill, borderColor: ring }]}>
-        <MugGlyph size={selected ? 20 : 17} color={ink} />
+        <Ionicons name={iconName} size={iconSize} color={ink} />
         <AppText
           variant="label"
           color={ink}
@@ -174,10 +143,9 @@ const styles = StyleSheet.create({
   pricePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingVertical: 4,
-    paddingLeft: 7,
-    paddingRight: 10,
+    gap: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderRadius: radius.pill,
     borderWidth: OUTLINE_WIDTH,
   },
@@ -188,15 +156,6 @@ const styles = StyleSheet.create({
   priceLabelSelected: {
     fontSize: 14,
     lineHeight: 18,
-  },
-  glyphBox: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    paddingTop: 1,
-  },
-  glyphMug: {
-    alignItems: 'center',
   },
   tipWindow: {
     overflow: 'hidden',

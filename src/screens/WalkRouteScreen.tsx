@@ -103,6 +103,7 @@ export function WalkRouteScreen() {
             label={t('common.priceCzk', { value: venue.cheapestPriceCzk })}
             selected
             tier="full"
+            type={venue.type}
           />
         </Marker>
       </MapView>

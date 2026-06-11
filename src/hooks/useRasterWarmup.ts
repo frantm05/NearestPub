@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Warm-up for react-native-maps custom markers. With `tracksViewChanges={false}`
- * the marker is snapshotted once, immediately — on Android that can fire before
- * Text inside the pin has measured (text layout is async), so only synchronously
- * painted Views survive: for our pin, the rotated-square tip, which reads as a
- * lone triangle. Track changes for a few frames after mount, then freeze.
+ * react-native-maps custom markers: with tracksViewChanges={false} the native
+ * layer takes a one-shot snapshot of the marker view immediately. On Android,
+ * Text layout is asynchronous — the snapshot fires before AppText has measured,
+ * so the anchor pixel offset is computed from the wrong (collapsed) dimensions
+ * and the pin drifts from its actual coordinate.
+ *
+ * Keep tracksViewChanges=true for `warmupMs` after mount, giving layout a full
+ * render cycle to complete, then freeze to stop unnecessary re-rasterization.
  */
-export function useRasterWarmup(warmupMs = 350): boolean {
+export function useRasterWarmup(warmupMs = 400): boolean {
   const [tracking, setTracking] = useState(true);
   useEffect(() => {
     const timer = setTimeout(() => setTracking(false), warmupMs);

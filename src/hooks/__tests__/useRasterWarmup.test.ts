@@ -21,7 +21,7 @@ describe('useRasterWarmup — marker rasterization window', () => {
     const { result } = renderHook(() => useRasterWarmup());
 
     act(() => {
-      jest.advanceTimersByTime(350);
+      jest.advanceTimersByTime(400);
     });
 
     expect(result.current).toBe(false);
