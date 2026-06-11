@@ -52,6 +52,8 @@ type PubsStatus = 'idle' | 'loading' | 'ready' | 'error';
 interface AreaSearch {
   /** The map viewport the user explicitly searched. */
   bounds: LatLngBounds;
+  /** The user's physical position at pin time — relocating far away unpins. */
+  origin: LatLng;
 }
 
 interface PubsState {
@@ -115,6 +117,8 @@ interface PubsContextValue {
 const PubsContext = createContext<PubsContextValue | undefined>(undefined);
 
 const RELOAD_DISTANCE_M = 400;
+/** Moves beyond this are relocations (travel, simulated GPS), not walks. */
+const RELOCATION_DISTANCE_M = DEFAULT_SEARCH_RADIUS_M * 2; // 5 km
 
 export function PubsProvider({ children }: { children: React.ReactNode }) {
   const { status: locationStatus, effectiveCoords } = useLocationContext();
@@ -178,6 +182,17 @@ export function PubsProvider({ children }: { children: React.ReactNode }) {
     [runLoad],
   );
 
+  // A pinned area search means "I'm browsing that area from here". Once the user
+  // physically relocates beyond a walk, the pin is stale context — drop it so the
+  // around-me pipeline reloads reality instead of decorating a faraway viewport's
+  // pubs with absurd distances.
+  useEffect(() => {
+    if (!searchedArea) return;
+    if (haversineMeters(searchedArea.origin, effectiveCoords) > RELOCATION_DISTANCE_M) {
+      setSearchedArea(null);
+    }
+  }, [searchedArea, effectiveCoords]);
+
   // Hydrate persisted community edits once, then load around the user —
   // unless results are pinned to an explicitly searched area.
   useEffect(() => {
@@ -191,11 +206,13 @@ export function PubsProvider({ children }: { children: React.ReactNode }) {
         if (stored) editsRef.current = stored;
         editsHydratedRef.current = true;
       }
-      const moved =
-        loadedCenter === null ||
-        haversineMeters(loadedCenter, effectiveCoords) > RELOAD_DISTANCE_M;
-      if (moved) {
-        await loadAround(effectiveCoords, DEFAULT_SEARCH_RADIUS_M, loadedCenter !== null);
+      const distanceMoved =
+        loadedCenter === null ? Infinity : haversineMeters(loadedCenter, effectiveCoords);
+      if (distanceMoved > RELOAD_DISTANCE_M) {
+        // Walks refresh silently; relocations load in the foreground so stale venues
+        // never render with cross-country distances while the new area is in flight.
+        const background = loadedCenter !== null && distanceMoved <= RELOCATION_DISTANCE_M;
+        await loadAround(effectiveCoords, DEFAULT_SEARCH_RADIUS_M, background);
       }
     })();
     return () => {
@@ -358,10 +375,10 @@ export function PubsProvider({ children }: { children: React.ReactNode }) {
   /** Map exploration: pin results to the searched viewport until cleared. */
   const searchArea = useCallback(
     async (bounds: LatLngBounds) => {
-      setSearchedArea({ bounds });
+      setSearchedArea({ bounds, origin: effectiveCoords });
       await runLoad(() => fetchVenuesInBounds(bounds), boundsCenter(bounds), false);
     },
-    [runLoad],
+    [runLoad, effectiveCoords],
   );
 
   const clearAreaSearch = useCallback(() => {

@@ -12,6 +12,7 @@ import { Card } from '../components/Card';
 import { EmptyState } from '../components/EmptyState';
 import { VenueMarker } from '../components/VenueMarker';
 import { useVenue } from '../hooks/useNearbyVenues';
+import { useRasterWarmup } from '../hooks/useRasterWarmup';
 import { useWalkingRoute } from '../hooks/useWalkingRoute';
 import { useLocationContext } from '../state/LocationProvider';
 import { darkMapStyle } from '../theme/mapStyle';
@@ -44,6 +45,7 @@ export function WalkRouteScreen() {
 
   const mapRef = useRef<MapView>(null);
   const fittedRef = useRef(false);
+  const markerTracking = useRasterWarmup();
 
   useEffect(() => {
     if (!route || fittedRef.current) return;
@@ -96,7 +98,7 @@ export function WalkRouteScreen() {
             <View style={[styles.originDot, { borderColor: theme.colors.surface, backgroundColor: theme.colors.info }]} />
           </Marker>
         ) : null}
-        <Marker coordinate={venue.coordinate} anchor={{ x: 0.5, y: 1 }} tracksViewChanges={false}>
+        <Marker coordinate={venue.coordinate} anchor={{ x: 0.5, y: 1 }} tracksViewChanges={markerTracking}>
           <VenueMarker
             label={t('common.priceCzk', { value: venue.cheapestPriceCzk })}
             selected

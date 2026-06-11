@@ -15,7 +15,8 @@ import { FavoriteHeart } from '../components/FavoriteHeart';
 import { FilterSheet } from '../components/FilterSheet';
 import { TypeIcon } from '../components/TypeIcon';
 import { VenueMarker, type MarkerTier } from '../components/VenueMarker';
-import { useNearbyVenues } from '../hooks/useNearbyVenues';
+import { useNearbyVenues, type DecoratedVenue } from '../hooks/useNearbyVenues';
+import { useRasterWarmup } from '../hooks/useRasterWarmup';
 import { useFavorites } from '../state/FavoritesProvider';
 import { useFilters } from '../state/FiltersProvider';
 import { useLocationContext } from '../state/LocationProvider';
@@ -62,6 +63,36 @@ function boundsFromRegion(region: Region): LatLngBounds {
 function regionRadiusM(region: Region): number {
   return (
     Math.max(region.latitudeDelta * 111320, region.longitudeDelta * 71500) / 2
+  );
+}
+
+interface VenuePinMarkerProps {
+  venue: DecoratedVenue;
+  tier: MarkerTier;
+  selected: boolean;
+  label: string;
+  onSelect: (venueId: string) => void;
+}
+
+/**
+ * One venue pin. Each marker owns its rasterization warm-up: it tracks view
+ * changes briefly after (re)mount so the snapshot is taken only once the
+ * pin's text has laid out, then freezes for map-pan performance.
+ */
+function VenuePinMarker({ venue, tier, selected, label, onSelect }: VenuePinMarkerProps) {
+  const tracking = useRasterWarmup();
+  return (
+    <Marker
+      coordinate={venue.coordinate}
+      anchor={tier === 'dot' ? { x: 0.5, y: 0.5 } : { x: 0.5, y: 1 }}
+      tracksViewChanges={tracking}
+      onPress={(event) => {
+        event.stopPropagation();
+        onSelect(venue.id);
+      }}
+    >
+      <VenueMarker label={label} selected={selected} tier={tier} />
+    </Marker>
   );
 }
 
@@ -158,24 +189,16 @@ export function MapScreen() {
         {venues.map((venue) => {
           const isSelected = venue.id === selectedId;
           return (
-            <Marker
-              // Tier/selection/price in the key force re-rasterization since
-              // tracksViewChanges is off for performance.
+            <VenuePinMarker
+              // Tier/selection/price in the key force a remount, which re-warms
+              // the rasterization window and re-snapshots the pin.
               key={`${venue.id}:${tier}:${isSelected}:${venue.cheapestPriceCzk}`}
-              coordinate={venue.coordinate}
-              anchor={tier === 'dot' ? { x: 0.5, y: 0.5 } : { x: 0.5, y: 1 }}
-              tracksViewChanges={false}
-              onPress={(event) => {
-                event.stopPropagation();
-                setSelectedId(venue.id);
-              }}
-            >
-              <VenueMarker
-                label={t('common.priceCzk', { value: venue.cheapestPriceCzk })}
-                selected={isSelected}
-                tier={tier}
-              />
-            </Marker>
+              venue={venue}
+              tier={tier}
+              selected={isSelected}
+              label={t('common.priceCzk', { value: venue.cheapestPriceCzk })}
+              onSelect={setSelectedId}
+            />
           );
         })}
       </MapView>

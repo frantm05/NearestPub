@@ -109,6 +109,7 @@ export function VenueMarker({ label, selected, tier }: VenueMarkerProps) {
     const size = selected ? 18 : 13;
     return (
       <View
+        collapsable={false}
         style={{
           width: size,
           height: size,
@@ -124,7 +125,7 @@ export function VenueMarker({ label, selected, tier }: VenueMarkerProps) {
   if (tier === 'compact') {
     const head = selected ? 40 : 32;
     return (
-      <View style={styles.pin}>
+      <View collapsable={false} style={styles.pin}>
         <View
           style={[
             styles.head,
@@ -145,7 +146,7 @@ export function VenueMarker({ label, selected, tier }: VenueMarkerProps) {
   }
 
   return (
-    <View style={styles.pin}>
+    <View collapsable={false} style={styles.pin}>
       <View style={[styles.pricePill, { backgroundColor: fill, borderColor: ring }]}>
         <MugGlyph size={selected ? 20 : 17} color={ink} />
         <AppText
